@@ -1,8 +1,15 @@
+#include <heltec.h>
+
 void setup() {
-    Serial.begin(9600);
+    heltec_setup();
 }
 
+int i = 0;
+
 void loop() {
-    Serial.println("Hello, World!");
+    heltec_loop();
+
+    Serial.println("Serial works");
+    display.println("Display works " + String(i++));
     delay(1000);
 }
