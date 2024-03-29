@@ -1,3 +1,5 @@
+// Unofficial library: https://github.com/ropg/heltec_esp32_lora_v3/
+
 #include <heltec.h>
 
 void setup() {
