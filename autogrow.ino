@@ -1,17 +1,19 @@
-// Unofficial library: https://github.com/ropg/heltec_esp32_lora_v3/
-
 #include <heltec.h>
+
+#include "src/dhtSensor.h"
+
+dhtSensor dht11 = dhtSensor(true);
 
 void setup() {
     heltec_setup();
+    dht11.init();
 }
-
-int i = 0;
 
 void loop() {
     heltec_loop();
-
-    Serial.println("Serial works");
-    display.println("Display works " + String(i++));
-    delay(1000);
+    delay(2000);  // Delay between measurements.
+    float h = dht11.readHumidity();
+    float t = dht11.readTemperature();
+    display.println("Humidity: " + String(h) + "%");
+    display.println("Temperature: " + String(t) + "°C");
 }
