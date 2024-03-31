@@ -1,10 +1,11 @@
-#include "DHT.h"
+#include <DHT.h>
 
 #define DHTPIN 7
 #define DHTTYPE DHT11
 
-class dhtSensor {
-   public:
+class dhtSensor
+{
+public:
     dhtSensor(bool isFahrenheit = false);
     ~dhtSensor(){};
 
@@ -12,7 +13,7 @@ class dhtSensor {
     int readHumidity();
     void init();
 
-   private:
+private:
     void readSensorData();
     int lastReadingTimestamp;
     int humidity;

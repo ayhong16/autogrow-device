@@ -2,7 +2,7 @@
     "configuration": "LoopCore=1,EventsCore=1,CPUFreq=240,UploadSpeed=921600,PartitionScheme=default_8MB,DebugLevel=none,EraseFlash=none",
     "board": "Heltec (unofficial):esp32:heltec_esp32_lora_v3",
     "programmer": "esptool",
-    "sketch": "autogrow.ino",
-    "output": "build",
+    "sketch": "main/main.ino",
+    "output": "./build",
     "port": "COM3"
 }
