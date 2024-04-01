@@ -17,16 +17,10 @@ DHTSensor::DHTSensor(bool isFahrenheit)
     isFahrenheit = isFahrenheit;
 }
 
-float DHTSensor::readTemperature()
+Reading DHTSensor::getSensorData()
 {
-    readOneSensor(0);
-    return temperature;
-}
-
-int DHTSensor::readHumidity()
-{
-    readOneSensor(0);
-    return humidity;
+    safeRead();
+    return Reading(temperature, humidity);
 }
 
 Reading DHTSensor::readOneSensor(int sensorIndex)
@@ -39,7 +33,7 @@ Reading DHTSensor::readOneSensor(int sensorIndex)
     // Check if any reads failed and exit early (to try again).
     if (isnan(h) || isnan(t)) {
         Serial.println(F("Failed to read from DHT sensor!"));
-        return;
+        return Reading(0, 0, -1);
     }
 
     return Reading(t, h);
@@ -47,10 +41,39 @@ Reading DHTSensor::readOneSensor(int sensorIndex)
 
 void DHTSensor::safeRead()
 {
+    float discrepency_threshold = 3;
+    std::vector<Reading> sensorReadings;
     int i = 0;
     while (i < dhtSensors.size())
     {
-        Reading sensorReading = readOneSensor(i);
+        sensorReadings.push_back(readOneSensor(i));
         i++;
     }
+
+    float avg_temp = 0;
+    float avg_humd = 0;
+
+    for (const auto reading : sensorReadings)
+    {
+        if (reading.error < 0)
+        {
+            return;
+        }
+        avg_humd += reading.humd;
+        avg_temp += reading.temp;
+    }
+
+    avg_humd /= sensorReadings.size();
+    avg_temp /= sensorReadings.size();
+
+    for (const auto reading : sensorReadings)
+    {
+        if (abs(avg_humd - reading.humd) > discrepency_threshold || abs(avg_temp - reading.temp) > discrepency_threshold)
+        {
+            return;
+        }
+    }
+
+    temperature = avg_temp;
+    humidity = avg_humd;
 }

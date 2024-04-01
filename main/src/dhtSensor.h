@@ -9,8 +9,10 @@ struct Reading
 {
     float temp;
     float humd;
+    int error;
 
-    Reading(float t, float h) : temp(t), humd(h) {}
+    Reading(float t, float h) : temp(t), humd(h), error(0) {}
+    Reading(float t, float h, int err) : temp(t), humd(h), error(err) {}
 };
 
 class DHTSensor
@@ -19,8 +21,7 @@ public:
     DHTSensor(bool isFahrenheit = false);
     ~DHTSensor(){};
 
-    float readTemperature();
-    int readHumidity();
+    Reading getSensorData();
 
 private:
     Reading readOneSensor(int sensorIndex);
