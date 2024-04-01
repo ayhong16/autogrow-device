@@ -1,8 +1,8 @@
 #include <DHT.h>
 #include <vector>
 
-#define DHT0PIN 7
-#define DHT1PIN 8
+#define DHT0PIN 6
+#define DHT1PIN 7
 #define DHTTYPE DHT11
 
 struct Reading
