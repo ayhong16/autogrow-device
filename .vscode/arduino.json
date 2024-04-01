@@ -3,6 +3,6 @@
     "board": "Heltec (unofficial):esp32:heltec_esp32_lora_v3",
     "programmer": "esptool",
     "sketch": "main/main.ino",
-    "output": "./build",
+    "output": "../build",
     "port": "COM3"
 }

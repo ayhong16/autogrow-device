@@ -2,26 +2,51 @@
 
 #include <heltec.h>
 #include "src/dhtSensor.h"
-#include "src/wifi.h"
+#include "src/wifiWrapper.h"
+#include "src/httpWrapper.h"
+#include <memory>
 
 dhtSensor dht11;
-Wifi wifi;
+std::unique_ptr<HTTPWrapper> httpClient;
+
+template <typename T, typename... Args>
+std::unique_ptr<T> make_unique(Args &&...args)
+{
+    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+}
 
 void setup()
 {
     heltec_setup();
     dht11.init();
     dht11 = dhtSensor(true);
-    delay(2000); // Delay to let system boot up.
-    wifi = Wifi();
+    WiFiWrapper();
+    httpClient = make_unique<HTTPWrapper>();
+    httpClient->testConnection();
 }
 
 void loop()
 {
     heltec_loop();
-    delay(5000); // Delay between measurements.
+    delay(2500); // Delay between measurements.
     float h = dht11.readHumidity();
     float t = dht11.readTemperature();
-    display.println("Humidity: " + String(h) + "%");
-    display.println("Temperature: " + String(t) + "°C");
+    display_values(t, h);
+}
+
+void display_values(float temp, float humd)
+{
+    struct tm timeinfo;
+    if (getLocalTime(&timeinfo))
+    {
+        both.print("-- ");
+        both.print(&timeinfo, "%B %d %Y %H:%M:%S");
+        both.println(" --");
+    }
+    else
+    {
+        Serial.println("Failed to obtain time");
+    }
+    both.println("Humidity: " + String(humd) + "%");
+    both.println("Temperature: " + String(temp) + "°C");
 }
