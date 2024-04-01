@@ -26,7 +26,7 @@ public:
 private:
     Reading readOneSensor(int sensorIndex);
     void safeRead();
-    int humidity;
+    float humidity;
     float temperature;
     bool isFahrenheit;
     std::vector<DHT> dhtSensors;

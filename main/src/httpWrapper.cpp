@@ -53,15 +53,14 @@ int HTTPWrapper::postMeasurements(float temp, float humd, float ph, bool light)
 
   char *postData = cJSON_Print(root);
 
-  Serial.println(postData);
-
   int httpResponseCode = http.POST(postData);
 
   if (httpResponseCode > 0)
   {
     // Get the response payload
     String response = http.getString();
-    Serial.println(httpResponseCode);
+    Serial.print(httpResponseCode);
+    Serial.print(" ");
     Serial.println(response);
   }
   else

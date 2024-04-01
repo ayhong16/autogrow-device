@@ -18,7 +18,7 @@ std::unique_ptr<T> make_unique(Args &&...args)
 void setup()
 {
     heltec_setup();
-    dht11 = DHTSensor(false);
+    dht11 = DHTSensor();
     WiFiWrapper();
     httpClient = make_unique<HTTPWrapper>();
     httpClient->testConnection();
@@ -57,6 +57,6 @@ void display_values(float temp, float humd)
     {
         Serial.println("Failed to obtain time");
     }
-    both.println("Humidity: " + String(humd) + "%");
     both.println("Temperature: " + String(temp) + "°C");
+    both.println("Humidity: " + String(humd) + "%");
 }

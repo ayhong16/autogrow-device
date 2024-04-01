@@ -70,6 +70,7 @@ void DHTSensor::safeRead()
     {
         if (abs(avg_humd - reading.humd) > discrepency_threshold || abs(avg_temp - reading.temp) > discrepency_threshold)
         {
+            Serial.println("Error: Sensor discrepency detected");
             return;
         }
     }
