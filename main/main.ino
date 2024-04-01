@@ -6,7 +6,8 @@
 #include "src/httpWrapper.h"
 #include <memory>
 
-dhtSensor dht11;
+DHTSensor dht11_0;
+DHTSensor dht11_1;
 std::unique_ptr<HTTPWrapper> httpClient;
 
 template <typename T, typename... Args>
@@ -18,8 +19,8 @@ std::unique_ptr<T> make_unique(Args &&...args)
 void setup()
 {
     heltec_setup();
-    dht11.init();
-    dht11 = dhtSensor(true);
+    dht11_0 = DHTSensor(false);
+    dht11_1 = DHTSensor(false);
     WiFiWrapper();
     httpClient = make_unique<HTTPWrapper>();
     httpClient->testConnection();
@@ -28,15 +29,24 @@ void setup()
 void loop()
 {
     heltec_loop();
-    delay(5000); // Delay between measurements.
-    float h = dht11.readHumidity();
-    float t = dht11.readTemperature();
+    delay(30000);
+    float h = dht11_0.readHumidity();
+    float t = dht11_0.readTemperature();
     display_values(t, h);
-    httpClient->postMeasurements(5.5, 5.0, 4.69, false);
+    int response_code = httpClient->postMeasurements(t, h, 4.69, false);
+    if (response_code >= 0)
+    {
+        display.println("Upload to server successful");
+    }
+    else
+    {
+        display.println("Failed to upload to server");
+    }
 }
 
 void display_values(float temp, float humd)
 {
+    display.cls();
     struct tm timeinfo;
     if (getLocalTime(&timeinfo))
     {

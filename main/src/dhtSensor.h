@@ -1,23 +1,32 @@
 #include <DHT.h>
+#include <vector>
 
-#define DHTPIN 7
+#define DHT0PIN 7
+#define DHT1PIN 8
 #define DHTTYPE DHT11
 
-class dhtSensor
+struct Reading
+{
+    float temp;
+    float humd;
+
+    Reading(float t, float h) : temp(t), humd(h) {}
+};
+
+class DHTSensor
 {
 public:
-    dhtSensor(bool isFahrenheit = false);
-    ~dhtSensor(){};
+    DHTSensor(bool isFahrenheit = false);
+    ~DHTSensor(){};
 
-    int readTemperature();
+    float readTemperature();
     int readHumidity();
-    void init();
 
 private:
-    void readSensorData();
-    int lastReadingTimestamp;
+    Reading readOneSensor(int sensorIndex);
+    void safeRead();
     int humidity;
-    int temperature;
+    float temperature;
     bool isFahrenheit;
-    DHT dht;
+    std::vector<DHT> dhtSensors;
 };
