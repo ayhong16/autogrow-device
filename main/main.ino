@@ -28,10 +28,11 @@ void setup()
 void loop()
 {
     heltec_loop();
-    delay(2500); // Delay between measurements.
+    delay(5000); // Delay between measurements.
     float h = dht11.readHumidity();
     float t = dht11.readTemperature();
     display_values(t, h);
+    httpClient->postMeasurements(5.5, 5.0, 4.69, false);
 }
 
 void display_values(float temp, float humd)

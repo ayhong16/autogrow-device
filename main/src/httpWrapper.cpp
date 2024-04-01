@@ -28,3 +28,47 @@ void HTTPWrapper::testConnection()
 
   http.end();
 }
+
+int HTTPWrapper::postMeasurements(float temp, float humd, float ph, bool light)
+{
+  http.begin(url);
+  http.addHeader("Content-Type", "application/json");
+  cJSON *root = cJSON_CreateObject();
+
+  std::string light_string;
+  if (light)
+  {
+    light_string = "true";
+  }
+  else
+  {
+    light_string = "false";
+  }
+
+  // Add data to the JSON object
+  cJSON_AddNumberToObject(root, "temp", temp);
+  cJSON_AddNumberToObject(root, "humd", humd);
+  cJSON_AddNumberToObject(root, "ph", ph);
+  cJSON_AddStringToObject(root, "light", light_string.c_str());
+
+  char *postData = cJSON_Print(root);
+
+  Serial.println(postData);
+
+  int httpResponseCode = http.POST(postData);
+
+  if (httpResponseCode > 0)
+  {
+    // Get the response payload
+    String response = http.getString();
+    Serial.println(httpResponseCode);
+    Serial.println(response);
+  }
+  else
+  {
+    Serial.print("Error on sending POST: ");
+    Serial.println(httpResponseCode);
+  }
+  http.end();
+  return httpResponseCode;
+}
