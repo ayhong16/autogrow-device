@@ -1,6 +1,6 @@
 #include <WiFi.h>
 #include "time.h"
-#include "secrets.h"
+#include "../secrets.h"
 
 class WiFiWrapper
 {

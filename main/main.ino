@@ -1,12 +1,16 @@
 // Unofficial library: https://github.com/ropg/heltec_esp32_lora_v3/
 
+#include "src/sensor/dht11.h"
+// #include "src/sensor/ph.h"
+#include "src/actuator/light.h"
+#include "src/comm/wifiWrapper.h"
+#include "src/comm/httpWrapper.h"
 #include <heltec.h>
-#include "src/dhtSensor.h"
-#include "src/wifiWrapper.h"
-#include "src/httpWrapper.h"
 #include <memory>
 
+Light light;
 DHTSensor dht11;
+// PHSensor ph;
 std::unique_ptr<HTTPWrapper> httpClient;
 
 template <typename T, typename... Args>
@@ -18,7 +22,9 @@ std::unique_ptr<T> make_unique(Args &&...args)
 void setup()
 {
     heltec_setup();
+    light = Light();
     dht11 = DHTSensor();
+    // ph = PHSensor();
     WiFiWrapper();
     httpClient = make_unique<HTTPWrapper>();
     httpClient->testConnection();
@@ -27,23 +33,26 @@ void setup()
 void loop()
 {
     heltec_loop();
-    delay(30000);
+    delay(5000);
+    light.toggle();
     Reading dhtData = dht11.getSensorData();
+    // float phValue = ph.getPH();
+    float phValue = 0;
     float t = dhtData.temp;
     float h = dhtData.humd;
-    display_values(t, h);
-    int response_code = httpClient->postMeasurements(t, h, 4.69, false);
+    display_values(t, h, phValue);
+    int response_code = httpClient->postMeasurements(t, h, phValue, false);
     if (response_code >= 0)
     {
-        display.println("Upload to server successful");
+        Serial.println("Upload to server successful");
     }
     else
     {
-        display.println("Failed to upload to server");
+        Serial.println("Failed to upload to server");
     }
 }
 
-void display_values(float temp, float humd)
+void display_values(float temp, float humd, float phValue)
 {
     display.cls();
     struct tm timeinfo;
@@ -59,4 +68,5 @@ void display_values(float temp, float humd)
     }
     both.println("Temperature: " + String(temp) + "°C");
     both.println("Humidity: " + String(humd) + "%");
+    both.println("pH: " + String(phValue));
 }

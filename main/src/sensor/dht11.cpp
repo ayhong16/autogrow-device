@@ -1,4 +1,4 @@
-#include "dhtSensor.h"
+#include "dht11.h"
 
 DHTSensor::DHTSensor(bool isFahrenheit)
 {
@@ -30,8 +30,11 @@ Reading DHTSensor::readOneSensor(int sensorIndex)
     float h = dhtSensors[sensorIndex].readHumidity();
     float t = dhtSensors[sensorIndex].readTemperature(false);
 
+    Serial.println("Sensor " + String(sensorIndex) + " - Humidity: " + String(h) + " %\tTemperature: " + String(t) + " *C ");
+
     // Check if any reads failed and exit early (to try again).
-    if (isnan(h) || isnan(t)) {
+    if (isnan(h) || isnan(t))
+    {
         Serial.println(F("Failed to read from DHT sensor!"));
         return Reading(0, 0, -1);
     }
