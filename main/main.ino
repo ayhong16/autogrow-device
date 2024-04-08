@@ -1,30 +1,29 @@
 // Unofficial library: https://github.com/ropg/heltec_esp32_lora_v3/
 
+#include "Arduino.h"
+#include "heltec.h"
+#include "src/util/both.h"
+#include "src/util/utils.h"
 #include "src/sensor/dht11.h"
-// #include "src/sensor/ph.h"
+#include "src/sensor/ph.h"
 #include "src/actuator/light.h"
 #include "src/comm/wifiWrapper.h"
 #include "src/comm/httpWrapper.h"
-#include <heltec.h>
-#include <memory>
 
 Light light;
 DHTSensor dht11;
-// PHSensor ph;
+PHSensor ph;
 std::unique_ptr<HTTPWrapper> httpClient;
-
-template <typename T, typename... Args>
-std::unique_ptr<T> make_unique(Args &&...args)
-{
-    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
-}
 
 void setup()
 {
-    heltec_setup();
+    Serial.begin(115200);
+    Heltec.begin(true /*DisplayEnable Enable*/, false /*LoRa Disable*/, true /*Serial Enable*/);
+    Heltec.display->flipScreenVertically();
+    Heltec.display->setFont(ArialMT_Plain_10);
     light = Light();
     dht11 = DHTSensor();
-    // ph = PHSensor();
+    ph = PHSensor();
     WiFiWrapper();
     httpClient = make_unique<HTTPWrapper>();
     httpClient->testConnection();
@@ -32,14 +31,13 @@ void setup()
 
 void loop()
 {
-    heltec_loop();
     delay(5000);
     light.toggle();
     Reading dhtData = dht11.getSensorData();
-    // float phValue = ph.getPH();
-    float phValue = 0;
     float t = dhtData.temp;
     float h = dhtData.humd;
+    float phValue = 7.0;
+    phValue = ph.getPH(t);
     display_values(t, h, phValue);
     int response_code = httpClient->postMeasurements(t, h, phValue, false);
     if (response_code >= 0)
@@ -50,23 +48,4 @@ void loop()
     {
         Serial.println("Failed to upload to server");
     }
-}
-
-void display_values(float temp, float humd, float phValue)
-{
-    display.cls();
-    struct tm timeinfo;
-    if (getLocalTime(&timeinfo))
-    {
-        both.print("-- ");
-        both.print(&timeinfo, "%B %d %Y %H:%M:%S");
-        both.println(" --");
-    }
-    else
-    {
-        Serial.println("Failed to obtain time");
-    }
-    both.println("Temperature: " + String(temp) + "°C");
-    both.println("Humidity: " + String(humd) + "%");
-    both.println("pH: " + String(phValue));
 }
