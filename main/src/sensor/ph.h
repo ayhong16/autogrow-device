@@ -4,7 +4,8 @@
 // #include <EEPROM.h>
 
 #include "../lib/PH Sensor/DFRobot_ESP_PH_WITH_ADC.h"
-#include <Adafruit_ADS1X15.h>
+#include "../lib/ADS1X15/ADS1X15.h"
+#include <Wire.h>
 #include <EEPROM.h>
 
 #define PH_PIN GPIO_NUM_1
@@ -19,7 +20,7 @@ public:
 private:
   float voltage, phValue, temperature = 25;
   DFRobot_ESP_PH_WITH_ADC ph;
-  Adafruit_ADS1115 ads;
+  ADS1115 ads;
 
   void safeRead(float temperature);
 };

@@ -1,3 +1,4 @@
+#include "heltec.h"
 #include <memory>
 
 template <typename T, typename... Args>
@@ -7,3 +8,5 @@ std::unique_ptr<T> make_unique(Args &&...args)
 }
 
 void display_values(float temp, float humd, float phValue);
+
+void print_string(const String &str, int yHeight);

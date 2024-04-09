@@ -2,7 +2,6 @@
 
 #include "Arduino.h"
 #include "heltec.h"
-#include "src/util/both.h"
 #include "src/util/utils.h"
 #include "src/sensor/dht11.h"
 #include "src/sensor/ph.h"
@@ -20,6 +19,7 @@ void setup()
     Serial.begin(115200);
     Heltec.begin(true /*DisplayEnable Enable*/, false /*LoRa Disable*/, true /*Serial Enable*/);
     Heltec.display->flipScreenVertically();
+    Heltec.display->clear();
     Heltec.display->setFont(ArialMT_Plain_10);
     light = Light();
     dht11 = DHTSensor();
@@ -31,13 +31,13 @@ void setup()
 
 void loop()
 {
-    delay(5000);
     light.toggle();
     Reading dhtData = dht11.getSensorData();
     float t = dhtData.temp;
     float h = dhtData.humd;
     float phValue = 7.0;
     phValue = ph.getPH(t);
+
     display_values(t, h, phValue);
     int response_code = httpClient->postMeasurements(t, h, phValue, false);
     if (response_code >= 0)
@@ -48,4 +48,5 @@ void loop()
     {
         Serial.println("Failed to upload to server");
     }
+    delay(5000);
 }

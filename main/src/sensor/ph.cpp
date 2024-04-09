@@ -31,62 +31,19 @@
  * date  2019-06
  */
 
-// DFRobot_ESP_PH_WITH_ADC ph;
-// Adafruit_ADS1115 ads;
-
-// float voltage, phValue, temperature = 25;
-
-// float readTemperature()
-// {
-//   // add your code here to get the temperature from your temperature sensor
-//   sensors.requestTemperatures();
-//   return sensors.getTempCByIndex(0);
-// }
-
-// void setup()
-// {
-//   Serial.begin(115200);
-//   EEPROM.begin(32);
-//   ph.begin();
-//   sensors.begin();
-//   ads.setGain(GAIN_ONE);
-//   ads.begin();
-// }
-
-// void loop()
-// {
-//   static unsigned long timepoint = millis();
-//   if (millis() - timepoint > 1000U) // time interval: 1s
-//   {
-//     timepoint = millis();
-//     /**
-//      * index 0 for adc's pin A0
-//      * index 1 for adc's pin A1
-//      * index 2 for adc's pin A2
-//      * index 3 for adc's pin A3
-//      */
-//     voltage = ads.readADC_SingleEnded(1) / 10; // read the voltage
-//     Serial.print("voltage:");
-//     Serial.println(voltage, 4);
-
-//     temperature = readTemperature(); // read your temperature sensor to execute temperature compensation
-//     Serial.print("temperature:");
-//     Serial.print(temperature, 1);
-//     Serial.println("^C");
-
-//     phValue = ph.readPH(voltage, temperature); // convert voltage to pH with temperature compensation
-//     Serial.print("pH:");
-//     Serial.println(phValue, 4);
-//   }
-//   ph.calibration(voltage, temperature); // calibration process by Serail CMD
-// }
+#define PIN_SDA 20
+#define PIN_SCL 21
 
 PHSensor::PHSensor()
 {
+  Serial.println("PH Sensor constructor");
   EEPROM.begin(32);
-  ph.begin();
-  ads.setGain(GAIN_ONE);
-  ads.begin();
+  Serial.println("EEPROM initialized");
+  ph.begin(0);
+  Serial.println("PH Sensor initialized");
+  Serial.println("Wire initialized");
+  // ads.begin();
+  // ads.setGain(1);
 }
 
 float PHSensor::getPH(float temperature)
@@ -97,21 +54,10 @@ float PHSensor::getPH(float temperature)
 
 void PHSensor::safeRead(float temperature)
 {
-  // voltage = 0.0;
-  voltage = ads.readADC_SingleEnded(1) / 10; // read the voltage
-  Serial.print("voltage:");
-  Serial.println(voltage, 4);
-
-  Serial.print("temperature:");
-  Serial.print(temperature, 1);
-  Serial.println("^C");
+  int sensorValue = analogRead(A0); // Read analog voltage from pin A0
+  float voltage = sensorValue / 4095.0 * 3.3;
 
   phValue = ph.readPH(voltage, temperature); // convert voltage to pH with temperature compensation
-  Serial.print("pH:");
-  Serial.println(phValue, 4);
-
-  // ph.calibration(voltage, temperature); // calibration process by Serail CMD
-  phValue = 0;
 }
 
 // void PHSensor::calibrate()
