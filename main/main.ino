@@ -31,22 +31,25 @@ void setup()
 
 void loop()
 {
-    light.toggle();
-    Reading dhtData = dht11.getSensorData();
-    float t = dhtData.temp;
-    float h = dhtData.humd;
-    float phValue = 7.0;
-    phValue = ph.getPH(t);
+    static unsigned long timepoint = millis();
+    if (millis() - timepoint > 2500U) // time interval: 5s
+    {
+        timepoint = millis();
+        light.toggle();
+        Reading dhtData = dht11.getSensorData();
+        float phValue = ph.getPH(dhtData.temp);
 
-    display_values(t, h, phValue);
-    int response_code = httpClient->postMeasurements(t, h, phValue, false);
-    if (response_code >= 0)
-    {
-        Serial.println("Upload to server successful");
+        display_values(dhtData.temp, dhtData.humd, phValue);
+        int response_code = httpClient->postMeasurements(dhtData.temp, dhtData.humd, phValue, false);
+        if (response_code >= 0)
+        {
+            Serial.println("Upload to server successful");
+        }
+        else
+        {
+            Serial.println("Failed to upload to server");
+        }
     }
-    else
-    {
-        Serial.println("Failed to upload to server");
-    }
-    delay(5000);
+
+    ph.calibrate(ph.getVoltage(), dht11.getSensorData().temp);
 }

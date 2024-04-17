@@ -55,15 +55,7 @@ int HTTPWrapper::postMeasurements(float temp, float humd, float ph, bool light)
 
   int httpResponseCode = http.POST(postData);
 
-  if (httpResponseCode > 0)
-  {
-    // Get the response payload
-    String response = http.getString();
-    Serial.print(httpResponseCode);
-    Serial.print(" ");
-    Serial.println(response);
-  }
-  else
+  if (httpResponseCode <= 0)
   {
     Serial.print("Error on sending POST: ");
     Serial.println(httpResponseCode);

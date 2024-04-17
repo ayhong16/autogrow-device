@@ -25,12 +25,8 @@ Reading DHTSensor::getSensorData()
 
 Reading DHTSensor::readOneSensor(int sensorIndex)
 {
-    // Reading temperature or humidity takes about 250 milliseconds!
-    // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
     float h = dhtSensors[sensorIndex].readHumidity();
     float t = dhtSensors[sensorIndex].readTemperature(false);
-
-    Serial.println("Sensor " + String(sensorIndex) + " - Humidity: " + String(h) + " %\tTemperature: " + String(t) + " *C ");
 
     // Check if any reads failed and exit early (to try again).
     if (isnan(h) || isnan(t))
@@ -44,7 +40,18 @@ Reading DHTSensor::readOneSensor(int sensorIndex)
 
 void DHTSensor::safeRead()
 {
-    float discrepency_threshold = 3;
+    // Reading temperature or humidity takes about 250 milliseconds!
+    // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
+    static unsigned long timepoint = millis();
+    if (millis() - timepoint < 2000U)
+    {
+        return;
+    }
+    else
+    {
+        timepoint = millis();
+    }
+    const float discrepency_threshold = 3;
     std::vector<Reading> sensorReadings;
     int i = 0;
     while (i < dhtSensors.size())
@@ -78,6 +85,6 @@ void DHTSensor::safeRead()
         }
     }
 
-    temperature = avg_temp;
-    humidity = avg_humd;
+    this->temperature = avg_temp;
+    this->humidity = avg_humd;
 }

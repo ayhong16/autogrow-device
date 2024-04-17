@@ -1,10 +1,8 @@
 // https://github.com/GreenPonik/DFRobot_ESP_PH_WITH_ADC_BY_GREENPONIK
 
-// #include "../lib/DFRobot_PH/DFRobot_PH.h"
-// #include <EEPROM.h>
-
+#include <Arduino.h>
 #include "../lib/PH Sensor/DFRobot_ESP_PH_WITH_ADC.h"
-#include "../lib/ADS1X15/ADS1X15.h"
+// #include "../lib/ADS1X15/ADS1X15.h"
 #include <Wire.h>
 #include <EEPROM.h>
 
@@ -16,11 +14,11 @@ public:
   ~PHSensor(){};
 
   float getPH(float temperature);
+  float getVoltage();
+  void calibrate(float voltage, float temperature);
 
 private:
   float voltage, phValue, temperature = 25;
   DFRobot_ESP_PH_WITH_ADC ph;
-  ADS1115 ads;
-
-  void safeRead(float temperature);
+  // ADS1115 ads;
 };

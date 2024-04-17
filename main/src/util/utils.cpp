@@ -15,7 +15,6 @@ void display_values(float temp, float humd, float phValue)
             timeinfo.tm_hour,        // Hour
             timeinfo.tm_min,         // Minute
             timeinfo.tm_sec);        // Second
-    Serial.println(buffer);
     str += buffer;
     str += " --";
     print_string(str, 0);
