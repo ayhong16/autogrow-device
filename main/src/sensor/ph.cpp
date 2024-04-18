@@ -47,11 +47,8 @@ PHSensor::PHSensor()
   EEPROM.begin(32);
   Serial.println("EEPROM initialized");
 
-  EEPROM.writeFloat(0, PH_7);
-  EEPROM.writeFloat(sizeof(float), PH_4);
-
-  Serial.println(EEPROM.readFloat(0));
-  Serial.println(EEPROM.readFloat(4));
+  // EEPROM.writeFloat(0, PH_7);
+  // EEPROM.writeFloat(sizeof(float), PH_4);
 
   // ads.begin();
   // ads.setGain(1);
@@ -91,7 +88,6 @@ float PHSensor::getPH(float temp)
     {
       continue;
     }
-    Serial.println("Voltage: " + String(v) + "mV");
     average_voltage += v;
     count++;
   }

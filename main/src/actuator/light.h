@@ -10,6 +10,8 @@ public:
 
   void turnOn();
   void turnOff();
+  void setState(bool state);
+  bool getState();
   void toggle();
 
 private:

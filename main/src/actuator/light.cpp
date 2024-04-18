@@ -29,3 +29,20 @@ void Light::toggle()
     turnOn();
   }
 }
+
+void Light::setState(bool state)
+{
+  if (state)
+  {
+    turnOn();
+  }
+  else
+  {
+    turnOff();
+  }
+}
+
+bool Light::getState()
+{
+  return isOn;
+}

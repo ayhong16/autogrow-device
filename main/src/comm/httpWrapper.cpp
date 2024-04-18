@@ -4,21 +4,16 @@ void HTTPWrapper::testConnection()
 {
   http.begin("http://jsonplaceholder.typicode.com/todos/1"); // HTTP
 
-  Serial.print("[HTTP] GET...\n");
   // start connection and send HTTP header
   int httpCode = http.GET();
 
   // httpCode will be negative on error
   if (httpCode > 0)
   {
-    // HTTP header has been send and Server response header has been handled
-    Serial.printf("[HTTP] GET... code: %d\n", httpCode);
-
     // file found at server
     if (httpCode == HTTP_CODE_OK)
     {
-      String payload = http.getString();
-      Serial.println(payload);
+      Serial.println("HTTP connection successful");
     }
   }
   else
@@ -31,7 +26,7 @@ void HTTPWrapper::testConnection()
 
 int HTTPWrapper::postMeasurements(float temp, float humd, float ph, bool light)
 {
-  http.begin(url);
+  http.begin(HOST, 80, "/api/reading");
   http.addHeader("Content-Type", "application/json");
   cJSON *root = cJSON_CreateObject();
 
@@ -62,4 +57,31 @@ int HTTPWrapper::postMeasurements(float temp, float humd, float ph, bool light)
   }
   http.end();
   return httpResponseCode;
+}
+
+State HTTPWrapper::getState()
+{
+  http.begin(HOST, 80, "/api/state");
+  http.addHeader("Content-Type", "application/json");
+
+  int httpResponseCode = http.GET();
+
+  Serial.println(httpResponseCode);
+
+  if (httpResponseCode != HTTP_CODE_OK)
+  {
+    Serial.print("Error on sending GET: ");
+    Serial.println(httpResponseCode);
+    return State();
+  }
+  cJSON *root = cJSON_Parse(http.getString().c_str());
+  cJSON *name = cJSON_GetObjectItem(root, "name");
+  cJSON *light = cJSON_GetObjectItem(root, "light");
+  cJSON *phPollInterval = cJSON_GetObjectItem(root, "phPollInterval");
+  cJSON *dhtPollInterval = cJSON_GetObjectItem(root, "dhtPollInterval");
+
+  State state(cJSON_GetStringValue(name), cJSON_IsTrue(light), cJSON_GetNumberValue(phPollInterval), cJSON_GetNumberValue(dhtPollInterval));
+  cJSON_Delete(root);
+  http.end();
+  return state;
 }

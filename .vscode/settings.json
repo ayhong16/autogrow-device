@@ -10,6 +10,7 @@
         "string_view": "cpp",
         "initializer_list": "cpp",
         "new": "cpp",
-        "memory": "cpp"
+        "memory": "cpp",
+        "list": "cpp"
     }
 }
