@@ -12,9 +12,10 @@ struct State
   bool light;
   int phPollInterval;
   int dhtPollInterval;
+  bool err;
 
-  State() : name(DEFAULT_NAME), light(false), phPollInterval(DEFAULT_SENSING_INTERVAL), dhtPollInterval(DEFAULT_SENSING_INTERVAL) {}
-  State(std::string name, bool light, int phPollInterval, int dhtPollInterval) : name(name), light(light), phPollInterval(phPollInterval), dhtPollInterval(dhtPollInterval) {}
+  State() : name(DEFAULT_NAME), light(false), phPollInterval(DEFAULT_SENSING_INTERVAL), dhtPollInterval(DEFAULT_SENSING_INTERVAL), err(true) {}
+  State(std::string name, bool light, int phPollInterval, int dhtPollInterval) : name(name), light(light), phPollInterval(phPollInterval), dhtPollInterval(dhtPollInterval), err(false) {}
 };
 
 class HTTPWrapper

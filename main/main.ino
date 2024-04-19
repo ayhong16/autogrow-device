@@ -22,6 +22,11 @@ char *name;
 void getState()
 {
     State state = httpClient->getState();
+    if (state.err)
+    {
+        Serial.println("Failed to get state from server");
+        return;
+    }
     name = (char *)state.name.c_str();
     light.setState(state.light);
 
