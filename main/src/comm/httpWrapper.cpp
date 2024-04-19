@@ -49,7 +49,6 @@ void HTTPWrapper::testConnection()
 
 int HTTPWrapper::postMeasurements(float temp, float humd, float ph, bool light)
 {
-  http.end();
   http.begin(HOST + String("/api/reading"));
   http.addHeader("Content-Type", "application/json");
   cJSON *root = cJSON_CreateObject();
@@ -106,6 +105,10 @@ State HTTPWrapper::getState()
 
   State state(cJSON_GetStringValue(name), cJSON_IsTrue(light), cJSON_GetNumberValue(phPollInterval), cJSON_GetNumberValue(dhtPollInterval));
   cJSON_Delete(root);
+  cJSON_Delete(name);
+  cJSON_Delete(light);
+  cJSON_Delete(phPollInterval);
+  cJSON_Delete(dhtPollInterval);
   http.end();
   return state;
 }
