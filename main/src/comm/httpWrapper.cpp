@@ -2,7 +2,9 @@
 
 void HTTPWrapper::testConnection()
 {
-  http.begin("http://jsonplaceholder.typicode.com/todos/1"); // HTTP
+  char *endpoint = "http://autogrow.nrgserver.me/api";
+  Serial.println("Testing GET and POST connection to " + String(endpoint));
+  http.begin(endpoint); // HTTP
 
   // start connection and send HTTP header
   int httpCode = http.GET();
@@ -13,7 +15,7 @@ void HTTPWrapper::testConnection()
     // file found at server
     if (httpCode == HTTP_CODE_OK)
     {
-      Serial.println("HTTP connection successful");
+      Serial.println("GET successful");
     }
   }
   else
@@ -22,11 +24,33 @@ void HTTPWrapper::testConnection()
   }
 
   http.end();
+
+  http.begin(endpoint); // HTTP
+
+  // start connection and send HTTP header
+  httpCode = http.POST("");
+
+  // httpCode will be negative on error
+  if (httpCode > 0)
+  {
+    // file found at server
+    if (httpCode == HTTP_CODE_OK)
+    {
+      Serial.println("POST successful");
+    }
+  }
+  else
+  {
+    Serial.printf("[HTTP] POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
+  }
+
+  http.end();
 }
 
 int HTTPWrapper::postMeasurements(float temp, float humd, float ph, bool light)
 {
-  http.begin(HOST, 80, "/api/reading");
+  http.end();
+  http.begin(HOST + String("/api/reading"));
   http.addHeader("Content-Type", "application/json");
   cJSON *root = cJSON_CreateObject();
 
@@ -50,6 +74,8 @@ int HTTPWrapper::postMeasurements(float temp, float humd, float ph, bool light)
 
   int httpResponseCode = http.POST(postData);
 
+  cJSON_Delete(root);
+
   if (httpResponseCode <= 0)
   {
     Serial.print("Error on sending POST: ");
@@ -61,24 +87,22 @@ int HTTPWrapper::postMeasurements(float temp, float humd, float ph, bool light)
 
 State HTTPWrapper::getState()
 {
-  http.begin(HOST, 80, "/api/state");
-  http.addHeader("Content-Type", "application/json");
+  http.begin("http://autogrow.nrgserver.me/api/state");
 
   int httpResponseCode = http.GET();
-
-  Serial.println(httpResponseCode);
 
   if (httpResponseCode != HTTP_CODE_OK)
   {
     Serial.print("Error on sending GET: ");
-    Serial.println(httpResponseCode);
+    Serial.println(t_http_codes(httpResponseCode));
+    http.end();
     return State();
   }
   cJSON *root = cJSON_Parse(http.getString().c_str());
   cJSON *name = cJSON_GetObjectItem(root, "name");
-  cJSON *light = cJSON_GetObjectItem(root, "light");
-  cJSON *phPollInterval = cJSON_GetObjectItem(root, "phPollInterval");
-  cJSON *dhtPollInterval = cJSON_GetObjectItem(root, "dhtPollInterval");
+  cJSON *light = cJSON_GetObjectItem(root, "light_state");
+  cJSON *phPollInterval = cJSON_GetObjectItem(root, "ph_poll_interval");
+  cJSON *dhtPollInterval = cJSON_GetObjectItem(root, "dht_poll_interval");
 
   State state(cJSON_GetStringValue(name), cJSON_IsTrue(light), cJSON_GetNumberValue(phPollInterval), cJSON_GetNumberValue(dhtPollInterval));
   cJSON_Delete(root);

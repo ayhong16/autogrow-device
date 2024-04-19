@@ -1,5 +1,3 @@
-// Unofficial library: https://github.com/ropg/heltec_esp32_lora_v3/
-
 #include "Arduino.h"
 #include "heltec.h"
 #include "src/util/utils.h"
@@ -17,19 +15,25 @@ uint32_t phSensingInterval = DEFAULT_SENSING_INTERVAL;
 uint32_t dhtSensingInterval = DEFAULT_SENSING_INTERVAL;
 
 float phValue = 0;
-float temperature = 25;
-float humidity = 50;
+float temperature = 0;
+float humidity = 0;
 char *name;
 
-void syncState()
+void getState()
 {
     State state = httpClient->getState();
     name = (char *)state.name.c_str();
     light.setState(state.light);
-    phSensingInterval = state.dhtPollInterval;
-    dhtSensingInterval = state.dhtPollInterval;
+
+    // Sensing intervals are in seconds, convert to milliseconds
+    phSensingInterval = state.phPollInterval * 1000;
+    dhtSensingInterval = state.dhtPollInterval * 1000;
 
     display_values(temperature, humidity, phValue, name);
+}
+
+void postMeasurements()
+{
     int response_code = httpClient->postMeasurements(temperature, humidity, phValue, light.getState());
     if (response_code >= 0)
     {
@@ -45,10 +49,8 @@ void setup()
 {
     Serial.begin(115200);
     Heltec.begin(true /*DisplayEnable Enable*/, false /*LoRa Disable*/, true /*Serial Enable*/);
-    delay(500);
     Heltec.display->flipScreenVertically();
     Heltec.display->clear();
-    Heltec.display->flush();
     Heltec.display->setFont(ArialMT_Plain_10);
     light = Light();
     dht11 = DHTSensor();
@@ -57,12 +59,19 @@ void setup()
     httpClient = make_unique<HTTPWrapper>();
     httpClient->testConnection();
 
+    delay(2500);
+
     // Set initial values
-    Reading dhtData = dht11.getSensorData();
-    temperature = dhtData.temp;
-    humidity = dhtData.humd;
+    while (humidity == 0.0 || temperature == 0.0)
+    {
+        Reading dhtData = dht11.getSensorData();
+        temperature = dhtData.temp;
+        humidity = dhtData.humd;
+        delay(2500);
+        Serial.println("Waiting for sensor data...");
+    }
     phValue = ph.getPH(temperature);
-    syncState();
+    getState();
 }
 
 void loop()
@@ -76,17 +85,17 @@ void loop()
         Reading dhtData = dht11.getSensorData();
         temperature = dhtData.temp;
         humidity = dhtData.humd;
+        postMeasurements();
     }
     if (millis() - phSensingTimepoint > phSensingInterval)
     {
         phSensingTimepoint = millis();
         phValue = ph.getPH(temperature);
+        postMeasurements();
     }
-    if (millis() - lightTimepoint > DEFAULT_STATE_INTERVAL)
+    if (millis() - lightTimepoint > DEFAULT_SYNC_INTERVAL)
     {
         lightTimepoint = millis();
-        syncState();
+        getState();
     }
-
-    ph.calibrate(ph.getVoltage(), dht11.getSensorData().temp);
 }

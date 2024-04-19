@@ -15,5 +15,5 @@ public:
   void toggle();
 
 private:
-  bool isOn;
+  bool isOn = false;
 };

@@ -3,8 +3,8 @@
 
 #define HOST "http://autogrow.nrgserver.me"
 #define DEFAULT_NAME "AutoGrow"
-#define DEFAULT_SENSING_INTERVAL 15000
-#define DEFAULT_STATE_INTERVAL 5000
+#define DEFAULT_SENSING_INTERVAL 1000 * 60 * 20 // 20 minutes
+#define DEFAULT_SYNC_INTERVAL 1000 * 10         // 10 seconds
 
 struct State
 {

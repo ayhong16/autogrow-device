@@ -40,15 +40,15 @@
 #define PIN_SCL 21
 
 #define PH_4 2202.0
-#define PH_7 1767.0
+#define PH_7 1785.0
 
 PHSensor::PHSensor()
 {
   EEPROM.begin(32);
   Serial.println("EEPROM initialized");
 
-  // EEPROM.writeFloat(0, PH_7);
-  // EEPROM.writeFloat(sizeof(float), PH_4);
+  EEPROM.writeFloat(0, PH_7);
+  EEPROM.writeFloat(sizeof(float), PH_4);
 
   // ads.begin();
   // ads.setGain(1);
@@ -65,7 +65,7 @@ float PHSensor::getPH(float temp)
   for (int i = 0; i < averageCount; i++)
   {
     float v = getVoltage();
-    if (v <= 2400)
+    if (v <= 2500)
     {
       _voltages.push_back(v);
     }
@@ -91,9 +91,12 @@ float PHSensor::getPH(float temp)
     average_voltage += v;
     count++;
   }
-  this->voltage = average_voltage / count;
-  Serial.println("Average voltage: " + String(this->voltage) + "mV");
-  this->phValue = ph.readPH(this->voltage, this->temperature);
+  if (count > 0)
+  {
+    this->voltage = average_voltage / count;
+    Serial.println("Average voltage: " + String(this->voltage) + "mV");
+    this->phValue = ph.readPH(this->voltage, this->temperature);
+  }
   return phValue;
 }
 
