@@ -27,6 +27,7 @@ public:
   virtual void testConnection();
   virtual int postMeasurements(float temp, float humd, float ph, bool light);
   virtual State getState();
+  virtual void postMemory();
 
 private:
   HTTPClient http;

@@ -74,13 +74,14 @@ int HTTPWrapper::postMeasurements(float temp, float humd, float ph, bool light)
   int httpResponseCode = http.POST(postData);
 
   cJSON_Delete(root);
+  free(postData);
+  http.end();
 
   if (httpResponseCode <= 0)
   {
     Serial.print("Error on sending POST: ");
     Serial.println(httpResponseCode);
   }
-  http.end();
   return httpResponseCode;
 }
 
@@ -103,4 +104,29 @@ State HTTPWrapper::getState()
   cJSON_Delete(root);
   http.end();
   return state;
+}
+
+void HTTPWrapper::postMemory()
+{
+  http.begin(HOST + String("/api/memory"));
+  http.addHeader("Content-Type", "application/json");
+  cJSON *root = cJSON_CreateObject();
+
+  cJSON_AddNumberToObject(root, "free_heap", ESP.getFreeHeap());
+  cJSON_AddNumberToObject(root, "min_free_heap", ESP.getMinFreeHeap());
+  cJSON_AddNumberToObject(root, "max_alloc_heap", ESP.getMaxAllocHeap());
+
+  char *postData = cJSON_Print(root);
+
+  int httpResponseCode = http.POST(postData);
+
+  cJSON_Delete(root);
+  free(postData);
+
+  if (httpResponseCode <= 0)
+  {
+    Serial.print("Error on sending POST: ");
+    Serial.println(httpResponseCode);
+  }
+  http.end();
 }

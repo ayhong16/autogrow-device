@@ -64,8 +64,6 @@ void setup()
     httpClient = make_unique<HTTPWrapper>();
     httpClient->testConnection();
 
-    delay(2500);
-
     // Set initial values
     while (humidity == 0.0 || temperature == 0.0)
     {
@@ -81,6 +79,7 @@ void setup()
 
 void loop()
 {
+    bool post = false;
     static unsigned long dhtSensingTimepoint = millis();
     static unsigned long phSensingTimepoint = millis();
     static unsigned long lightTimepoint = millis();
@@ -90,17 +89,22 @@ void loop()
         Reading dhtData = dht11.getSensorData();
         temperature = dhtData.temp;
         humidity = dhtData.humd;
-        postMeasurements();
+        post = true;
     }
     if (millis() - phSensingTimepoint > phSensingInterval)
     {
         phSensingTimepoint = millis();
         phValue = ph.getPH(temperature);
-        postMeasurements();
+        post = true;
     }
     if (millis() - lightTimepoint > DEFAULT_SYNC_INTERVAL)
     {
         lightTimepoint = millis();
         getState();
+        httpClient->postMemory();
+    }
+    if (post)
+    {
+        postMeasurements();
     }
 }

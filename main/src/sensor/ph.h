@@ -2,7 +2,10 @@
 
 #include <Arduino.h>
 #include "../lib/PH Sensor/DFRobot_ESP_PH_WITH_ADC.h"
-// #include "../lib/ADS1X15/ADS1X15.h"
+#include <iostream>
+#include <list>
+#include <algorithm>
+#include <iterator>
 #include <Wire.h>
 #include <EEPROM.h>
 
