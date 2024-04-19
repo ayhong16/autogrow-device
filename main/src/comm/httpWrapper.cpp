@@ -98,17 +98,9 @@ State HTTPWrapper::getState()
     return State();
   }
   cJSON *root = cJSON_Parse(http.getString().c_str());
-  cJSON *name = cJSON_GetObjectItem(root, "name");
-  cJSON *light = cJSON_GetObjectItem(root, "light_state");
-  cJSON *phPollInterval = cJSON_GetObjectItem(root, "ph_poll_interval");
-  cJSON *dhtPollInterval = cJSON_GetObjectItem(root, "dht_poll_interval");
 
-  State state(cJSON_GetStringValue(name), cJSON_IsTrue(light), cJSON_GetNumberValue(phPollInterval), cJSON_GetNumberValue(dhtPollInterval));
+  State state(cJSON_GetStringValue(cJSON_GetObjectItem(root, "name")), cJSON_IsTrue(cJSON_GetObjectItem(root, "light_state")), cJSON_GetNumberValue(cJSON_GetObjectItem(root, "ph_poll_interval")), cJSON_GetNumberValue(cJSON_GetObjectItem(root, "dht_poll_interval")));
   cJSON_Delete(root);
-  cJSON_Delete(name);
-  cJSON_Delete(light);
-  cJSON_Delete(phPollInterval);
-  cJSON_Delete(dhtPollInterval);
   http.end();
   return state;
 }
