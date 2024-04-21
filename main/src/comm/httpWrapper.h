@@ -1,7 +1,7 @@
 #include <cJSON.h>
 #include <HTTPClient.h>
 
-#define HOST "http://autogrow.nrgserver.me"
+#define HOST "http://autogrow-api.nrgserver.me"
 #define DEFAULT_NAME "AutoGrow"
 #define DEFAULT_SENSING_INTERVAL 1000 * 60 * 20 // 20 minutes
 #define DEFAULT_SYNC_INTERVAL 1000 * 10         // 10 seconds
