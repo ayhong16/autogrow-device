@@ -2,7 +2,7 @@
 
 void HTTPWrapper::testConnection()
 {
-  char *endpoint = "http://autogrow.nrgserver.me/api";
+  const char *endpoint = (HOST + String("/api")).c_str();
   Serial.println("Testing GET and POST connection to " + String(endpoint));
   http.begin(endpoint); // HTTP
 
@@ -87,7 +87,7 @@ int HTTPWrapper::postMeasurements(float temp, float humd, float ph, bool light)
 
 State HTTPWrapper::getState()
 {
-  http.begin("http://autogrow.nrgserver.me/api/state");
+  http.begin(HOST + String("/api/state"));
 
   int httpResponseCode = http.GET();
 
