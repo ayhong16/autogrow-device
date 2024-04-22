@@ -2,7 +2,8 @@
 
 void HTTPWrapper::testConnection()
 {
-  const char *endpoint = (HOST + String("/api")).c_str();
+  std::string endpointString = std::string(HOST) + std::string("/api");
+  char *endpoint = (char *)endpointString.c_str();
   Serial.println("Testing GET and POST connection to " + String(endpoint));
   http.begin(endpoint); // HTTP
 

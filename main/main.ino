@@ -101,7 +101,6 @@ void loop()
     {
         lightTimepoint = millis();
         getState();
-        // httpClient->postMemory();
     }
     if (post)
     {
