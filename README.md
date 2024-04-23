@@ -1,5 +1,9 @@
 ﻿# AutoGrow Device
 
+AutoGrow is a partially automated, smart hydroponic system that allows users to view pH levels, temperatures, and humidity values in realtime from anywhere. It also collects and displays historical data with live updating so that users can view previous trends in order to learn and optimize their hydroponic systems. AutoGrow is also a proof of concept that hydroponics can be automated by implementing an automatic grow light scheduler.
+
+This is 1 of 2 repositories relating to the final project for ECE 590: Full Stack IoT at Duke University. This repository contains the code for the Heltec ESP32 Lora V3 microcontroller.
+
 ## Development Instructions
 
 1. Add both of these links to additional board urls:
