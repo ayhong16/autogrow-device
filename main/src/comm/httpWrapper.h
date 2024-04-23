@@ -3,8 +3,8 @@
 
 #define HOST "http://autogrow-api.nrgserver.me"
 #define DEFAULT_NAME "AutoGrow"
-#define DEFAULT_SENSING_INTERVAL 1000 * 60 * 20 // 20 minutes
-#define DEFAULT_SYNC_INTERVAL 1000 * 10         // 10 seconds
+#define DEFAULT_SENSING_INTERVAL 1000 * 60 * 10 // 10 minutes
+#define DEFAULT_SYNC_INTERVAL 1000 * 15         // 15 seconds
 
 struct State
 {
@@ -21,7 +21,10 @@ struct State
 class HTTPWrapper
 {
 public:
-  HTTPWrapper() {}
+  HTTPWrapper()
+  {
+    http.setTimeout(5000);
+  }
   ~HTTPWrapper() {}
 
   virtual void testConnection();
