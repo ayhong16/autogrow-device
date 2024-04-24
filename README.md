@@ -4,6 +4,16 @@ AutoGrow is a partially automated, smart hydroponic system that allows users to 
 
 This is 1 of 2 repositories relating to the final project for ECE 590: Full Stack IoT at Duke University. This repository contains the code for the Heltec ESP32 Lora V3 microcontroller.
 
+## Features
+
+The esp32 microcontroller is responsible for the following tasks:
+
+* Collecting data from the DHT11 temperature and humidity sensors and averaging the values
+* Collecting data from the DFRobot pH sensor and filtering the output
+* Sending the data to the flask server via RESTful API
+* Receiving the grow light status from the flask server and controlling the grow light relay accordingly
+* Displaying the real time data on the OLED screen
+
 ## Development Instructions
 
 1. Add both of these links to additional board urls:
