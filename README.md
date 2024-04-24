@@ -13,7 +13,7 @@ This is 1 of 2 repositories relating to the final project for ECE 590: Full Stac
 3. Refresh package indexes
 4. Search for and install **Heltec (unofficial)**
 5. Open *Arduino library manager*
-6. Install the following packages
+6. Install the following packages   
    1. **Heltec_ESP32_LoRa_v3**
    2. **DHT sensor library**
    3. **DFRobot_ESP_PH_WITH_ADC_BY_GREENPONIK**
